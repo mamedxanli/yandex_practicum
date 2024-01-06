@@ -66,6 +66,9 @@ class SearchServer {
             vector <string> words;
         }; //correct
     
+        vector <DocumentContent> documents_;
+        set <string> stop_words_;    
+    
         void AddDocument(int document_id, const string& document) {
             const vector<string> words = SplitIntoWordsNoStop(document);
             documents_.push_back({document_id, words});    
@@ -86,26 +89,14 @@ class SearchServer {
             matched_documents.resize(MAX_RESULT_DOCUMENT_COUNT);
         }
         return matched_documents;
-    } //?????????
+        } //?????????
     
-    void PrintAllDocuments() const {
-        for (const auto& document : documents_) {
-            cout << "Document ID: " << document.id << endl;
-            for (const auto& word : document.words) {
-                cout << word << " ";
-            }
-            cout << endl;
-        }
-    }
     
-    vector<DocumentContent> GetDocuments() const {
-        return documents_;
-    }
-
+    
+    
+    
     private:
-        vector <DocumentContent> documents_;
-        set <string> stop_words_;
-    
+   
         vector<string> SplitIntoWordsNoStop(const string& document) {
         vector<string> words;
         for (const string& word : SplitIntoWords(document)) {
@@ -114,7 +105,7 @@ class SearchServer {
             }
         }
         return words;
-    } // correct
+        } // correct
     
         vector<Document> FindAllDocuments(const set<string>& query_words) {
         vector<Document> matched_documents;
@@ -124,13 +115,13 @@ class SearchServer {
                 matched_documents.push_back({document.id, relevance});
             }
         }
-    return matched_documents;
-    } // correct
+        return matched_documents;
+        } // correct
     
         static int MatchDocument(const DocumentContent& content, const set<string>& query_words) {
             if (query_words.empty()) {
                 return 0;
-    }
+        }
         set<string> matched_words;
         for (const string& word : content.words) {
             if (matched_words.count(word) != 0) {
@@ -166,19 +157,18 @@ SearchServer CreateSearchServer() {
 
 int main() {
     // Create the SearchServer instance with the input data
+    string query {}; 
+    
     SearchServer search_server = CreateSearchServer();
-    const auto& documents = search_server.GetDocuments();
-   
-    for (const auto& doc : documents) {
-        string query = "";
-        for (const auto& word : doc.words) {
-            query += word + " ";
+    for (const auto& document : search_server.documents_) {
+            for (const auto& word : document.words) {
+             query += word + " ";
+        } for ( const auto& doc : search_server.FindTopDocuments(query)) {
+        cout << "Document ID: " << doc.id << ", Relevance: " << doc.relevance << endl;
         }
-        auto top_documents = search_server.FindTopDocuments(query);
-        for (const auto& docs : top_documents) {
-            cout << "Document ID: " << docs.id << ", Relevance: " << docs.relevance << endl;
-        }
-
-}
+            }
+            //cout << "Document ID: " << doc.id << ", Relevance: " << doc.relevance << endl;
+    
+                  
     return 0;
 }
