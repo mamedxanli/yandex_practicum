@@ -87,6 +87,20 @@ class SearchServer {
         }
         return matched_documents;
     } //?????????
+    
+    void PrintAllDocuments() const {
+        for (const auto& document : documents_) {
+            cout << "Document ID: " << document.id << endl;
+            for (const auto& word : document.words) {
+                cout << word << " ";
+            }
+            cout << endl;
+        }
+    }
+    
+    vector<DocumentContent> GetDocuments() const {
+        return documents_;
+    }
 
     private:
         vector <DocumentContent> documents_;
@@ -151,10 +165,20 @@ SearchServer CreateSearchServer() {
 
 
 int main() {
-    // В функции main вызовите CreateSearchServer и положите результат в переменную (пока не константную!).
+    // Create the SearchServer instance with the input data
     SearchServer search_server = CreateSearchServer();
-    
-    //Затем вызовите метод FindTopDocuments и запустите цикл по его результату с выводом ответа.
-    
+    const auto& documents = search_server.GetDocuments();
+   
+    for (const auto& doc : documents) {
+        string query = "";
+        for (const auto& word : doc.words) {
+            query += word + " ";
+        }
+        auto top_documents = search_server.FindTopDocuments(query);
+        for (const auto& docs : top_documents) {
+            cout << "Document ID: " << docs.id << ", Relevance: " << docs.relevance << endl;
+        }
+
+}
     return 0;
 }
