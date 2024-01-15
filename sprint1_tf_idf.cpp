@@ -126,7 +126,8 @@ private:
     }
 
     double InverseDocumentFrequency(int documentCount, double documentFrequency) const {
-        return log(static_cast<double>(documentCount) / (1 + documentFrequency));
+        //return log(static_cast<double>(documentCount) / (1 + documentFrequency));
+        return log(static_cast<double>(documentCount) / documentFrequency);
     }
 
     vector<Document> FindAllDocuments(const Query& query_words) const {
@@ -135,7 +136,6 @@ private:
         if (!query_words.plus_words_.empty()) {
             for (const auto& word : query_words.plus_words_) {
                 if (IsInDoc(word)) {
-                    cout << "Document count: " << document_count_ << " word to doc freq: " << word_to_document_freqs_.at(word).size() << endl;
                     double idf = InverseDocumentFrequency(document_count_, word_to_document_freqs_.at(word).size());
                     for (const auto& [id, tf] : word_to_document_freqs_.at(word)) {
                         document_to_relevance[id] += tf * idf;
